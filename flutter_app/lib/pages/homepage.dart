@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // Services and Providers
 import 'package:flutter_app/auth/auth_service.dart';
@@ -53,6 +54,17 @@ class _HomePageState extends ConsumerState<HomePage> {
       }
     }
   }
+
+  Future<void> _launchURL(String url) async {
+  final uri = Uri.parse(url);
+  if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open the link')),
+      );
+    }
+  }
+}
 
   String getGreeting() {
     final hour = DateTime.now().hour;
@@ -204,7 +216,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                       imagePath: 'assets/images/book_a_slot.jpg',
                       title: 'Book a Session',
                       subtitle: 'Meet a mental health professional offline',
-                      onTap: () {},
+                      onTap: () {
+                        _launchURL('https://appointment.iitbhilai.ac.in/');
+                      },
                     ),
                     FeatureCard(
                       imagePath: 'assets/images/stress.jpg',
