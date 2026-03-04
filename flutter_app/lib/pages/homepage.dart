@@ -10,6 +10,7 @@ import 'package:flutter_app/auth/auth_service.dart';
 import 'package:flutter_app/pages/stress_check_page.dart';
 import 'package:flutter_app/pages/article_page.dart';
 import 'package:flutter_app/pages/mood_tracker.dart';
+import 'package:flutter_app/pages/online_meet_page.dart';
 import 'package:flutter_app/pages/ai_chat.dart';
 import 'package:flutter_app/pages/profile_page.dart';
 
@@ -191,7 +192,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       imagePath: 'assets/images/online_call.jpg',
                       title: '1:1 Online Meet',
                       subtitle: 'Talk privately with a psychiatrist online',
-                      onTap: () {},
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const OnlineMeetPage())),
                     ),
                     FeatureCard(
                       imagePath: "assets/images/mood.jpg",
