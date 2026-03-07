@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/auth/auth_service.dart';
 import 'package:flutter_app/widgets/feature_card.dart';
+import 'package:flutter_app/pages/meeting_requests_page.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
@@ -89,7 +90,7 @@ class AdminDashboard extends StatelessWidget {
                 imagePath: 'assets/images/online_call.jpg',
                 title: 'Meeting Requests',
                 subtitle: 'View incoming meeting requests',
-                onTap: () {},
+                onTap: () => Navigator.push(context,MaterialPageRoute(builder: (_) => const MeetingRequestsPage()),),
               ),
               FeatureCard(
                 imagePath: 'assets/images/book_a_slot.jpg',
