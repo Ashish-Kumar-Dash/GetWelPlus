@@ -16,4 +16,9 @@ class Meeting {
   });
 
   bool get isAttended => scheduledAt.isBefore(DateTime.now());
+
+  String get displayStatus {
+  if (isAttended && status == 'confirmed') return 'completed';
+  return status;
+}
 }

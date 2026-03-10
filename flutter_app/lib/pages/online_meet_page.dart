@@ -15,7 +15,6 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
 
   late TabController _tabController;
   final List<Meeting> _allMeetings = [
-
     Meeting(
       title: 'Session with Dr. Mehta',
       patientName: 'John Doe',
@@ -25,40 +24,39 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
       status: 'confirmed',
     ),
     Meeting(
-      title: 'Session with Dr. Mehta',
+      title: 'Stress Check Session',
       patientName: 'John Doe',
-      scheduledAt: DateTime.now().subtract(const Duration(days: 3)),
-      createdAt: DateTime.now().subtract(const Duration(days: 5)),
-      notes: 'Follow-up on anxiety management',
-      status: 'confirmed',
+      scheduledAt: DateTime.now().add(const Duration(days: 2)),
+      createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+      notes: 'Initial stress assessment',
+      status: 'pending',
     ),
     Meeting(
-      title: 'Session with Dr. Mehta',
+      title: 'Group Therapy',
       patientName: 'John Doe',
-      scheduledAt: DateTime.now().subtract(const Duration(days: 3)),
-      createdAt: DateTime.now().subtract(const Duration(days: 5)),
-      notes: 'Follow-up on anxiety management',
-      status: 'confirmed',
-    ),
-    Meeting(
-      title: 'Session with Dr. Mehta',
-      patientName: 'John Doe',
-      scheduledAt: DateTime.now().subtract(const Duration(days: 3)),
-      createdAt: DateTime.now().subtract(const Duration(days: 5)),
-      notes: 'Follow-up on anxiety management',
+      scheduledAt: DateTime.now().add(const Duration(days: 5)),
+      createdAt: DateTime.now().subtract(const Duration(hours: 5)),
+      notes: 'Weekly group session',
       status: 'confirmed',
     ),
   ];
 
-  List<Meeting> get _scheduled => _allMeetings.where((m) => !m.isAttended).toList();
-  List<Meeting> get _attended => _allMeetings.where((m) => m.isAttended).toList();
+  // attended: past meetings that are not cancelled
+  List<Meeting> get _attended => _allMeetings
+      .where((m) => m.isAttended && m.status != 'cancelled')
+      .toList();
+
+  // scheduled: future meetings + cancelled ones
+  List<Meeting> get _scheduled => _allMeetings
+      .where((m) => !m.isAttended || m.status == 'cancelled')
+      .toList();
 
   DateTime? _selectedDateTime;
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
 
   void _showScheduleSheet() {
-    _selectedDateTime=null;
+    _selectedDateTime = null;
     _notesController.clear();
     _titleController.clear();
 
@@ -75,195 +73,205 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
           builder: (context, setSheetState) {
             return SafeArea(
               child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 24,
-                    right: 24,
-                    top: 24,
-                    bottom: MediaQuery.of(context).viewInsets.bottom+20,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Container(
-                          width: 40,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade600,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
+                padding: EdgeInsets.only(
+                  left: 24,
+                  right: 24,
+                  top: 24,
+                  bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade600,
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Schedule a Meeting',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Schedule a Meeting',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
                       ),
-                      const SizedBox(height: 24),
-                
-                      // Date & Time picker
-                      GestureDetector(
-                        onTap: () async {
-                          final date = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now().add(const Duration(days: 1)),
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime.now().add(const Duration(days: 365)),
-                          );
-                
-                          if (date == null || !mounted) return;
-                
-                          final time = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          );
-                
-                          if (time == null || !mounted) return;
-                
-                          setSheetState(() {
-                            _selectedDateTime = DateTime(
-                              date.year,
-                              date.month,
-                              date.day,
-                              time.hour,
-                              time.minute,
-                            );
-                          });
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF2A2A2A),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: _selectedDateTime != null
-                                  ? const Color(0xFF4CAF50)
-                                  : Colors.grey.shade700,
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.calendar_today_outlined,
-                                  color: Color(0xFF4CAF50), size: 20),
-                              const SizedBox(width: 12),
-                              Text(
-                                _selectedDateTime != null
-                                    ? DateFormat('MMM d, yyyy · h:mm a').format(_selectedDateTime!)
-                                    : 'Select Date & Time',
-                                style: TextStyle(
-                                  color: _selectedDateTime != null
-                                      ? Colors.white
-                                      : Colors.grey.shade500,
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+                    ),
+                    const SizedBox(height: 24),
 
-                      TextField(
-                        controller: _titleController,
-                        style: const TextStyle(color: Colors.white),
-                        maxLines: 1,
-                        decoration: InputDecoration(
-                          hintText: 'Title',
-                          hintStyle: TextStyle(color: Colors.grey.shade500),
-                          filled: true,
-                          fillColor: const Color(0xFF2A2A2A),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade700),
+                    // Date & Time picker
+                    GestureDetector(
+                      onTap: () async {
+                        final date = await showDatePicker(
+                          context: context,
+                          initialDate:
+                              DateTime.now().add(const Duration(days: 1)),
+                          firstDate: DateTime.now(),
+                          lastDate:
+                              DateTime.now().add(const Duration(days: 365)),
+                        );
+
+                        if (date == null || !mounted) return;
+
+                        final time = await showTimePicker(
+                          context: context,
+                          initialTime: TimeOfDay.now(),
+                        );
+
+                        if (time == null || !mounted) return;
+
+                        setSheetState(() {
+                          _selectedDateTime = DateTime(
+                            date.year,
+                            date.month,
+                            date.day,
+                            time.hour,
+                            time.minute,
+                          );
+                        });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2A2A2A),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: _selectedDateTime != null
+                                ? const Color(0xFF4CAF50)
+                                : Colors.grey.shade700,
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: _titleController.text.isNotEmpty
-                                  ? const Color(0xFF4CAF50)  // ← green when filled
-                                  : Colors.grey.shade700,     // ← grey when empty
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.calendar_today_outlined,
+                                color: Color(0xFF4CAF50), size: 20),
+                            const SizedBox(width: 12),
+                            Text(
+                              _selectedDateTime != null
+                                  ? DateFormat('MMM d, yyyy · h:mm a')
+                                      .format(_selectedDateTime!)
+                                  : 'Select Date & Time',
+                              style: TextStyle(
+                                color: _selectedDateTime != null
+                                    ? Colors.white
+                                    : Colors.grey.shade500,
+                                fontSize: 15,
+                              ),
                             ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextField(
+                      controller: _titleController,
+                      style: const TextStyle(color: Colors.white),
+                      maxLines: 1,
+                      decoration: InputDecoration(
+                        hintText: 'Title',
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade700),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: _titleController.text.isNotEmpty
+                                ? const Color(0xFF4CAF50)
+                                : Colors.grey.shade700,
                           ),
-                          focusedBorder: OutlineInputBorder(
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              const BorderSide(color: Color(0xFF4CAF50)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    TextField(
+                      controller: _notesController,
+                      style: const TextStyle(color: Colors.white),
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: 'Notes / Reason (optional)',
+                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        filled: true,
+                        fillColor: const Color(0xFF2A2A2A),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade700),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              BorderSide(color: Colors.grey.shade700),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide:
+                              const BorderSide(color: Color(0xFF4CAF50)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4CAF50),
+                          foregroundColor: Colors.black,
+                          disabledBackgroundColor: Colors.grey.shade800,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF4CAF50)),
+                          ),
+                        ),
+                        onPressed: _selectedDateTime == null
+                            ? null
+                            : () {
+                                setState(() {
+                                  _allMeetings.add(
+                                    Meeting(
+                                      title: _titleController.text
+                                              .trim()
+                                              .isEmpty
+                                          ? 'My Session'
+                                          : _titleController.text.trim(),
+                                      patientName: 'Me',
+                                      scheduledAt: _selectedDateTime!,
+                                      createdAt: DateTime.now(),
+                                      notes: _notesController.text.trim(),
+                                      status: 'pending',
+                                    ),
+                                  );
+                                });
+                                Navigator.pop(context);
+                              },
+                        child: const Text(
+                          'Schedule Meeting',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                
-                      TextField(
-                        controller: _notesController,
-                        style: const TextStyle(color: Colors.white),
-                        maxLines: 3,
-                        decoration: InputDecoration(
-                          hintText: 'Notes / Reason (optional)',
-                          hintStyle: TextStyle(color: Colors.grey.shade500),
-                          filled: true,
-                          fillColor: const Color(0xFF2A2A2A),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade700),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Colors.grey.shade700),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: Color(0xFF4CAF50)),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-              
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF4CAF50),
-                            foregroundColor: Colors.black,
-                            disabledBackgroundColor: Colors.grey.shade800,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          onPressed: _selectedDateTime == null
-                              ? null
-                              : () {
-                                  setState(() {
-                                    _allMeetings.add(
-                                      Meeting(
-                                        title: _titleController.text.trim().isEmpty
-                                            ? 'My Session'
-                                            : _titleController.text.trim(),
-                                        patientName: 'Me',
-                                        scheduledAt: _selectedDateTime!,
-                                        createdAt: DateTime.now(),
-                                        notes: _notesController.text.trim(),
-                                        status: 'pending',
-                                      ),
-                                    );
-                                  });
-                                  Navigator.pop(context);
-                                },
-                          child: const Text(
-                            'Schedule Meeting',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
               ),
             );
           },
@@ -277,13 +285,13 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _titleController.addListener(() {
-        setState(() {}); // rebuilds when title text changes
-      });
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    _tabController.dispose(); // always dispose to free memory
+    _tabController.dispose();
     _notesController.dispose();
     _titleController.dispose();
     super.dispose();
@@ -319,11 +327,13 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.event_busy_outlined, size: 52, color: Colors.grey),
+                        Icon(Icons.event_busy_outlined,
+                            size: 52, color: Colors.grey),
                         SizedBox(height: 12),
                         Text(
                           'No upcoming meetings',
-                          style: TextStyle(color: Colors.grey, fontSize: 15),
+                          style:
+                              TextStyle(color: Colors.grey, fontSize: 15),
                         ),
                       ],
                     ),
@@ -334,31 +344,57 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
                     itemBuilder: (context, index) => MeetingCard(
                       meeting: _scheduled[index],
                       onTap: () {},
+                      onCancel: () {
+                        setState(() {
+                          final actual =
+                              _allMeetings.indexOf(_scheduled[index]);
+                          _allMeetings[actual] = Meeting(
+                            title: _scheduled[index].title,
+                            patientName: _scheduled[index].patientName,
+                            scheduledAt: _scheduled[index].scheduledAt,
+                            createdAt: _scheduled[index].createdAt,
+                            notes: _scheduled[index].notes,
+                            status: 'cancelled',
+                          );
+                        });
+                      },
+                      onJoin: () {
+                        // TODO: wire up video call later
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Joining meeting...')),
+                        );
+                      },
                     ),
                   ),
+
             // Attended tab
-              _attended.isEmpty
-                  ? const Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.event_busy_outlined, size: 52, color: Colors.grey),
-                          SizedBox(height: 12),
-                          Text(
-                            'No past meetings yet',
-                            style: TextStyle(color: Colors.grey, fontSize: 15),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _attended.length,
-                      itemBuilder: (context, index) => MeetingCard(
-                        meeting: _attended[index],
-                        onTap: () {},
-                      ),
+            _attended.isEmpty
+                ? const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.event_busy_outlined,
+                            size: 52, color: Colors.grey),
+                        SizedBox(height: 12),
+                        Text(
+                          'No past meetings yet',
+                          style:
+                              TextStyle(color: Colors.grey, fontSize: 15),
+                        ),
+                      ],
                     ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _attended.length,
+                    itemBuilder: (context, index) => MeetingCard(
+                      meeting: _attended[index],
+                      onTap: () {},
+                      onCancel: null,
+                      onJoin: null,
+                    ),
+                  ),
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
