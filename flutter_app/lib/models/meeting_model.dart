@@ -17,8 +17,9 @@ class Meeting {
     this.meetingType = 'video',
   });
 
-  bool get isAttended => scheduledAt.isBefore(DateTime.now());
-
+bool get isAttended => scheduledAt
+    .add(const Duration(hours: 2))
+    .isBefore(DateTime.now());
   bool get isChat => meetingType == 'chat';
 
   String get displayStatus {

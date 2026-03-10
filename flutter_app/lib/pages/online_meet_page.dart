@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/models/meeting_model.dart';
 import 'package:flutter_app/widgets/meeting_card.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_app/pages/doctor_chat_page.dart';
 
 class OnlineMeetPage extends StatefulWidget {
   const OnlineMeetPage({super.key});
@@ -18,7 +19,7 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
     Meeting(
       title: 'Session with Dr. Mehta',
       patientName: 'John Doe',
-      scheduledAt: DateTime.now().subtract(const Duration(days: 3)),
+      scheduledAt: DateTime.now(),
       createdAt: DateTime.now().subtract(const Duration(days: 5)),
       notes: 'Follow-up on anxiety management',
       status: 'confirmed',
@@ -36,11 +37,11 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
     Meeting(
       title: 'Group Therapy',
       patientName: 'John Doe',
-      scheduledAt: DateTime.now().add(const Duration(days: 5)),
-      createdAt: DateTime.now().subtract(const Duration(hours: 5)),
+      scheduledAt: DateTime.now().add(const Duration(minutes: 4)),
+      createdAt: DateTime.now().subtract(const Duration(hours: 2)),
       notes: 'Weekly group session',
       status: 'confirmed',
-      meetingType: 'video',
+      meetingType: 'chat',
     ),
   ];
 
@@ -424,10 +425,11 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
                         },
                         onJoin: () {
                           if (meeting.isChat) {
-                            // TODO: navigate to DoctorChatPage
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('Opening chat...')),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const DoctorChatPage(),
+                              ),
                             );
                           } else {
                             // TODO: launch Jitsi video call
