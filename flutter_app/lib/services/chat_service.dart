@@ -21,7 +21,7 @@ class ChatMessage {
 class ChatService {
   // openrouter endpoint
   static const _baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
-  static const _model = 'stepfun/step-3.5-flash:free'; // free tier model
+  static const _model = 'openrouter/hunter-alpha'; // free tier model
 
   final List<ChatMessage> _conversationHistory = [];
   String get _apiKey => dotenv.env['OPENROUTER_API_KEY'] ?? '';
