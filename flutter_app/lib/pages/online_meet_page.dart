@@ -29,6 +29,9 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
   List<Meeting> get _scheduled => _allMeetings
       .where((m) => !m.isAttended || m.status == 'cancelled')
       .toList();
+  List<Meeting> get _cancelled => _allMeetings
+      .where((m) => m.status == 'cancelled')
+      .toList();
 
   DateTime? _selectedDateTime;
   String _selectedMeetingType = 'video';
@@ -381,7 +384,7 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _titleController.addListener(() => setState(() {}));
     _fetchMeetings(); // load from Supabase on open
   }
@@ -412,6 +415,7 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
             tabs: const [
               Tab(text: 'Scheduled'),
               Tab(text: 'Attended'),
+              Tab(text: 'Cancelled'),
             ],
           ),
         ),
@@ -508,6 +512,34 @@ class _OnlineMeetPageState extends State<OnlineMeetPage>
                           itemCount: _attended.length,
                           itemBuilder: (context, index) => MeetingCard(
                             meeting: _attended[index],
+                            onTap: () {},
+                            onCancel: null,
+                            onJoin: null,
+                          ),
+                        ),
+
+                                      // Cancelled tab
+                  _cancelled.isEmpty
+                      ? const Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.cancel_outlined,
+                                  size: 52, color: Colors.grey),
+                              SizedBox(height: 12),
+                              Text(
+                                'No cancelled meetings',
+                                style: TextStyle(
+                                    color: Colors.grey, fontSize: 15),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: _cancelled.length,
+                          itemBuilder: (context, index) => MeetingCard(
+                            meeting: _cancelled[index],
                             onTap: () {},
                             onCancel: null,
                             onJoin: null,
