@@ -222,7 +222,7 @@ Give a brief, warm analysis (3-4 sentences max). Notice any patterns, celebrate 
           'X-Title': 'GetWel+',
         },
         body: jsonEncode({
-          'model': 'openrouter/hunter-alpha',
+          'model': 'stepfun/step-3.5-flash:free',
           'messages': [
             {'role': 'user', 'content': prompt}
           ],
