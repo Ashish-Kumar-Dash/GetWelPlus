@@ -461,6 +461,7 @@ List<Meeting> get _scheduled => _allMeetings
                                     MaterialPageRoute(
                                       builder: (_) => DoctorChatPage(
                                         meetingId: meeting.id,
+                                        isDoctor: true,
                                       ),
                                     ),
                                   );

@@ -8,6 +8,7 @@ class Meeting {
   final String notes;
   final String status; // 'pending', 'confirmed', 'cancelled', 'completed'
   final String meetingType; // 'video' or 'chat'
+  final List<String> tags;
 
   const Meeting({
     this.id = '',
@@ -19,6 +20,7 @@ class Meeting {
     required this.notes,
     required this.status,
     this.meetingType = 'video',
+    this.tags = const [],
   });
 
   // Parses a Supabase row into a Meeting object
@@ -32,7 +34,8 @@ scheduledAt: DateTime.parse(json['scheduled_at']).toLocal(),
 createdAt: DateTime.parse(json['created_at']).toLocal(),
       notes: json['notes'] ?? '',
       status: json['status'] ?? 'pending',
-      meetingType: json['meeting_type'] ?? 'video',
+meetingType: json['meeting_type'] ?? 'video',
+      tags: List<String>.from(json['tags'] ?? []),
     );
   }
 

@@ -58,16 +58,18 @@ class PatientCard extends StatelessWidget {
 
                     const SizedBox(height: 4),
 
-                    // Age + gender
                     Row(
                       children: [
                         const Icon(Icons.person_outline,
                             size: 13, color: Colors.grey),
                         const SizedBox(width: 5),
-                        Text(
-                          '${patient.age} years old · ${patient.gender}',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: Colors.grey),
+                        Flexible(
+                          child: Text(
+                            '${patient.age} years old',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: Colors.grey),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
@@ -80,10 +82,13 @@ class PatientCard extends StatelessWidget {
                         const Icon(Icons.access_time_outlined,
                             size: 13, color: Color(0xFF4CAF50)),
                         const SizedBox(width: 5),
-                        Text(
-                          'Last session: ${DateFormat('MMM d, yyyy').format(patient.lastSessionDate)}',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: const Color(0xFF4CAF50)),
+                        Flexible(
+                          child: Text(
+                            'Last session: ${DateFormat('MMM d, yyyy').format(patient.lastSessionDate)}',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: const Color(0xFF4CAF50)),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ],
                     ),
