@@ -19,7 +19,7 @@ class _DoctorChatPageState extends State<DoctorChatPage> {
   final ScrollController _scrollController = ScrollController();
   final _supabase = Supabase.instance.client;
 
-  List<Map<String, dynamic>> _messages = [];
+List<Map<String, Object>> _messages = [];
   bool _isLoading = true;
   RealtimeChannel? _channel;
 
@@ -97,6 +97,9 @@ class _DoctorChatPageState extends State<DoctorChatPage> {
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
+        debugPrint('meetingId: ${widget.meetingId}');
+    debugPrint('senderId: $_currentUserId');
+    debugPrint('text: $text');
 
     // Optimistically add to UI immediately
     setState(() {

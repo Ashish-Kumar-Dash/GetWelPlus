@@ -28,8 +28,8 @@ class Meeting {
       title: json['title'] ?? '',
       patientName: json['patient_profiles']?['full_name'] ?? '',
       patientDisplayId: json['patient_profiles']?['display_id'] ?? '',
-      scheduledAt: DateTime.parse(json['scheduled_at']),
-      createdAt: DateTime.parse(json['created_at']),
+scheduledAt: DateTime.parse(json['scheduled_at']).toLocal(),
+createdAt: DateTime.parse(json['created_at']).toLocal(),
       notes: json['notes'] ?? '',
       status: json['status'] ?? 'pending',
       meetingType: json['meeting_type'] ?? 'video',
@@ -37,7 +37,7 @@ class Meeting {
   }
 
   bool get isAttended => scheduledAt
-      .add(const Duration(hours: 2))
+      .add(const Duration(hours: 24))
       .isBefore(DateTime.now());
 
   bool get isChat => meetingType == 'chat';

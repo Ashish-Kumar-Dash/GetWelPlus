@@ -27,11 +27,11 @@ class _ScheduledMeetingsPageState extends State<ScheduledMeetingsPage> {
   Future<void> _fetchMeetings() async {
     setState(() => _isLoading = true);
     try {
-      final response = await _supabase
+        final response = await _supabase
           .from('meetings')
           .select('*, patient_profiles(display_id, full_name)')
           .eq('status', 'confirmed')
-          .gte('scheduled_at', DateTime.now().toIso8601String())
+          .gte('scheduled_at', DateTime.now().subtract(const Duration(hours: 24)).toIso8601String())
           .order('scheduled_at', ascending: true);
 
       setState(() {
