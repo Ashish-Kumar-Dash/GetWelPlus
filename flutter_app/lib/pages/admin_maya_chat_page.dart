@@ -171,9 +171,11 @@ class _AdminMayaChatPageState extends State<AdminMayaChatPage> {
               ),
             ),
             const SizedBox(width: 10),
-            const Expanded(
+            Expanded(
               child: Text(
-                'Maya (Doctor Assistant)',
+                _selectedPatientName != null && _selectedPatientName!.isNotEmpty
+                    ? 'Maya (Doctor Assistant) — $_selectedPatientName'
+                    : 'Maya (Doctor Assistant)',
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
