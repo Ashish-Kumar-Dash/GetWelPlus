@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/core/error_messages.dart';
 import 'package:flutter_app/models/patient_model.dart';
 import 'package:flutter_app/widgets/patient_card.dart';
 import 'package:flutter_app/pages/patient_detail_page.dart';
@@ -41,7 +42,7 @@ class _PatientListPageState extends State<PatientListPage> {
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error fetching patients: $e')),
+          SnackBar(content: Text('Error fetching patients: ${friendlyErrorMessage(e)}')),
         );
       }
     }

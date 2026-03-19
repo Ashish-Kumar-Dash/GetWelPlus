@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/core/error_messages.dart';
 import 'package:flutter_app/models/meeting_model.dart';
 import 'package:flutter_app/widgets/meeting_card.dart';
 import 'package:intl/intl.dart';
@@ -61,7 +62,7 @@ List<Meeting> get _scheduled => _allMeetings
       setState(() => _isLoading = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error fetching meetings: $e')),
+          SnackBar(content: Text('Error fetching meetings: ${friendlyErrorMessage(e)}')),
         );
       }
     }
@@ -88,7 +89,7 @@ List<Meeting> get _scheduled => _allMeetings
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error scheduling meeting: $e')),
+          SnackBar(content: Text('Error scheduling meeting: ${friendlyErrorMessage(e)}')),
         );
       }
     }
@@ -106,7 +107,7 @@ List<Meeting> get _scheduled => _allMeetings
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error cancelling meeting: $e')),
+          SnackBar(content: Text('Error cancelling meeting: ${friendlyErrorMessage(e)}')),
         );
       }
     }
