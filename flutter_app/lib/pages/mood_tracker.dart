@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math' show max;
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_app/pages/online_meet_page.dart';
 import 'package:flutter_app/services/notification_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -441,6 +442,97 @@ Give a brief, warm analysis (3-4 sentences max). Notice any patterns, celebrate 
             Icon(Icons.edit_rounded, size: 18, color: scheme.outline),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCareActionCard(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final today = _todayEntry;
+    final lowMoodToday = today != null && today.moodLevel <= 2;
+    final longLowRounds = _lowMoodStreak();
+    final show = lowMoodToday || longLowRounds >= 3;
+
+    if (!show) return const SizedBox.shrink();
+
+    final title = lowMoodToday
+        ? 'Today looks tough — you’re not alone'
+        : 'You’ve had a persistent low mood streak';
+    final subtitle = lowMoodToday
+        ? 'Try one of these calming steps now.'
+        : 'This is a good time for an extra check-in.';
+
+    return _Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w700)),
+          const SizedBox(height: 6),
+          Text(subtitle,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: scheme.outline)),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ElevatedButton.icon(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Breathing Exercise'),
+                      content: const Text(
+                        'Try 4-7-8 breathing:\n\n'
+                        '- Inhale for 4 seconds\n'
+                        '- Hold for 7 seconds\n'
+                        '- Exhale for 8 seconds\n\n'
+                        'Repeat 4 cycles.',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Close'),
+                        )
+                      ],
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.self_improvement_rounded),
+                label: const Text('Breathing Tip'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF1B5E20),
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const OnlineMeetPage()),
+                  );
+                },
+                icon: const Icon(Icons.medical_services_outlined),
+                label: const Text('Book a Doctor'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF4CAF50),
+                ),
+              ),
+              OutlinedButton.icon(
+                onPressed: () {
+                  _openLogSheet(today);
+                },
+                icon: const Icon(Icons.edit_calendar_outlined),
+                label: const Text('Update Mood Log'),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -906,6 +998,8 @@ Give a brief, warm analysis (3-4 sentences max). Notice any patterns, celebrate 
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTodayCard(context),
+                    const SizedBox(height: 12),
+                    _buildCareActionCard(context),
                     const SizedBox(height: 16),
                     _buildStats(context),
                     const SizedBox(height: 16),

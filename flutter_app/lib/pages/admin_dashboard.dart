@@ -10,6 +10,31 @@ import 'package:flutter_app/pages/scheduled_meetings_page.dart';
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});
 
+  Widget _buildInsightCard(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        color: scheme.surfaceVariant,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Daily practice tip',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  )),
+          const SizedBox(height: 8),
+          Text('Review pending patient requests and follow up on any high-risk mood alerts.',
+              style: Theme.of(context).textTheme.bodyMedium),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final authService = AuthService();
@@ -88,6 +113,8 @@ class AdminDashboard extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineSmall
                     ?.copyWith(fontWeight: FontWeight.w600, fontSize: 26),
               ),
+              const SizedBox(height: 12),
+              _buildInsightCard(context),
               const SizedBox(height: 20),
 
               FeatureCard(
